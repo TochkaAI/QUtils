@@ -3,8 +3,9 @@
 
 QMessageBox::StandardButton messageBox(QWidget* parent,
                                        QMessageBox::Icon icon,
-                                       const QString& message)
+                                       QString message)
 {
+    message.replace("  ", "\n").replace(" ", "&nbsp;");
     QMessageBox msgBox {parent};
     //msgBox.setWindowModality(Qt::WindowModal);
     msgBox.setIcon(icon);
