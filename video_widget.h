@@ -8,11 +8,10 @@ class VideoWidget : public QWidget
 public:
     explicit VideoWidget(QWidget* parent = nullptr);
 
-    // Отображает изображение/кадр
+    // Устанавливает отображаемое изображение/кадр
     void showImage(const QImage&);
 
-    // Определяет сообщение, которое будет отображаться, когда изображение
-    // отсутствует
+    // Сообщение, отображаемое при отсутствии изображения
     QString noImageMessage() const;
     void setNoImageMessage(const QString&);
 
