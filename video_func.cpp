@@ -4,8 +4,6 @@
 #include "shared/logger/format.h"
 #include "shared/qt/logger_operators.h"
 
-#include <opencv2/opencv.hpp>
-
 #define log_error_m   alog::logger().error   (alog_line_location, "VideoFunc")
 #define log_warn_m    alog::logger().warn    (alog_line_location, "VideoFunc")
 #define log_info_m    alog::logger().info    (alog_line_location, "VideoFunc")
@@ -18,28 +16,28 @@ namespace qutils {
 /**
   Source: https://asmaloney.com/2013/11/code/converting-between-cvmat-and-qimage-or-qpixmap/
 */
-QImage cvMatToQImage(const video::Frame::Ptr& frame)
+QImage cvMatToQImage(const cv::Mat& image)
 {
-    switch (frame->data.type())
+    switch (image.type())
     {
         case CV_8UC4: // 8-bit, 4 channel
         {
-            return QImage((uchar*)frame->data.data,
-                          int(frame->data.cols), int(frame->data.rows), int(frame->data.step),
+            return QImage((uchar*)image.data,
+                          int(image.cols), int(image.rows), int(image.step),
                           QImage::Format_RGB32
                          ).copy(); // Обязательно делать копию QImage
         }
         case CV_8UC3: // 8-bit, 3 channel
         {
-            return QImage((uchar*)frame->data.data,
-                          int(frame->data.cols), int(frame->data.rows), int(frame->data.step),
+            return QImage((uchar*)image.data,
+                          int(image.cols), int(image.rows), int(image.step),
                           QImage::Format_RGB888
                          ).rgbSwapped(); // Здесь уже возвращается копия QImage
         }
         case CV_8UC2: // YUYV
         {
             cv::Mat frm;
-            cvtColor(frame->data, frm, cv::COLOR_YUV2BGR_UYVY);
+            cvtColor(image, frm, cv::COLOR_YUV2BGR_UYVY);
             return QImage((uchar*)frm.data,
                           int(frm.cols), int(frm.rows), int(frm.step),
                           QImage::Format_RGB888
@@ -77,16 +75,21 @@ QImage cvMatToQImage(const video::Frame::Ptr& frame)
               for (int i = 0; i < 256; ++i)
                  sColorTable.push_back(qRgb(i, i, i));
 
-            QImage img((uchar*)frame->data.data,
-                        int(frame->data.cols), int(frame->data.rows), int(frame->data.step),
+            QImage img((uchar*)image.data,
+                        int(image.cols), int(image.rows), int(image.step),
                         QImage::Format_Indexed8);
            img.setColorTable(sColorTable);
            return img.copy(); // Обязательно делать копию QImage
         }
         default:
-           log_warn_m << "cv::Mat image type not handled; type: " << frame->data.type();
+           log_warn_m << "cv::Mat image type not handled; type: " << image.type();
     }
     return QImage();
+}
+
+QImage cvMatToQImage(const video::Frame::Ptr& frame)
+{
+    return cvMatToQImage(frame->data);
 }
 
 } // namespace qutils
