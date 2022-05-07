@@ -11,6 +11,9 @@ public:
     // Устанавливает отображаемое изображение/кадр
     void showImage(const QImage&);
 
+    // Возвращает отображаемое изображение/кадр в базовом размере
+    QImage image() const {return _baseImage;}
+
     // Сообщение, отображаемое при отсутствии изображения
     QString noImageMessage() const;
     void setNoImageMessage(const QString&);
