@@ -55,7 +55,9 @@ void VideoWidget::paintEvent(QPaintEvent* event)
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
     p.setRenderHint(QPainter::SmoothPixmapTransform, true);
+#if QT_VERSION < 0x060000
     p.setRenderHint(QPainter::HighQualityAntialiasing, true);
+#endif
     p.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
     if (_scaleImage.isNull())
