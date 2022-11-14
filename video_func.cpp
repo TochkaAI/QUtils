@@ -76,8 +76,8 @@ QImage cvMatToQImage(const cv::Mat& image)
                  sColorTable.push_back(qRgb(i, i, i));
 
             QImage img((uchar*)image.data,
-                        int(image.cols), int(image.rows), int(image.step),
-                        QImage::Format_Indexed8);
+                       int(image.cols), int(image.rows), int(image.step),
+                       QImage::Format_Indexed8);
            img.setColorTable(sColorTable);
            return img.copy(); // Обязательно делать копию QImage
         }
