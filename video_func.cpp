@@ -81,6 +81,22 @@ QImage cvMatToQImage(const cv::Mat& image)
            img.setColorTable(sColorTable);
            return img.copy(); // Обязательно делать копию QImage
         }
+        case CV_16UC1:
+        {
+            static QVector<QRgb>  sColorTable;
+            // only create our color table once
+            if (sColorTable.isEmpty())
+            for (int i = 0; i < 256; ++i)
+                sColorTable.push_back(qRgb(i, i, i));
+
+            cv::Mat convertImage;
+            image.convertTo(convertImage, CV_8UC1, 0.5);
+
+            QImage img((uchar*)convertImage.data, int(convertImage.cols), int(convertImage.rows), int(convertImage.step), QImage::Format_Indexed8);
+            img.setColorTable(sColorTable);
+            return img.copy();
+        }
+        break;
         default:
            log_warn_m << "cv::Mat image type not handled; type: " << image.type();
     }
