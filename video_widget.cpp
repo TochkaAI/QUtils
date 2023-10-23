@@ -3,7 +3,7 @@
 
 VideoWidget::VideoWidget(QWidget* parent) : QWidget(parent)
 {
-    _noImageMessage = QObject::tr("No Image");
+    _noImageMessage = QObject::tr("No image");
     _transformMode = Qt::SmoothTransformation;
 }
 
