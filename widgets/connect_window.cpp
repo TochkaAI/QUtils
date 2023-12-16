@@ -72,7 +72,6 @@ bool ConnectWindow::init(tcp::Socket::Ptr socket)
             return false;
 
         udp::socket().start();
-        //udp::socket().waitBinding(1);
 
         int cnt = 3;
         while (cnt--)
@@ -194,13 +193,6 @@ void ConnectWindow::loadStaticList()
 
     //ui->listCtl->sortItems();
     on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
-
-//    if (ui->tabWidget->currentIndex() == 1)
-//    {
-//        ui->btnConnect->setEnabled(ui->listStatic->count());
-//        if (!ui->listStatic->currentItem())
-//            ui->listStatic->setCurrentRow(0);
-//    }
 }
 
 void ConnectWindow::saveStaticList()
@@ -285,7 +277,6 @@ void ConnectWindow::on_btnConnect_clicked(bool /*checked*/)
             break;
     }
     setCursor(Qt::ArrowCursor);
-    //ui->btnConnect->setEnabled(true);
     on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
 
     if (!_socket->isConnected())
@@ -404,11 +395,7 @@ void ConnectWindow::updateList()
             delete lwi;
         }
     }
-
     on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
-
-//    if (ui->tabWidget->currentIndex() == 0)
-//        ui->btnConnect->setEnabled(ui->listDynamic->count());
 }
 
 void ConnectWindow::command_CtlDiscovery(const Message::Ptr& message)
@@ -435,7 +422,6 @@ void ConnectWindow::command_CtlDiscovery(const Message::Ptr& message)
             break;
         }
     }
-
     if (!found)
     {
         ConnectItem* ci = new ConnectItem();
@@ -452,15 +438,7 @@ void ConnectWindow::command_CtlDiscovery(const Message::Ptr& message)
         ui->listDynamic->setItemWidget(lwi, ci);
         //ui->listCtl->sortItems();
     }
-
     on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
-
-//    if (ui->tabWidget->currentIndex() == 0)
-//    {
-//        ui->btnConnect->setEnabled(ui->listDynamic->count());
-//        if (!ui->listDynamic->currentItem())
-//            ui->listDynamic->setCurrentRow(0);
-//    }
 }
 
 void ConnectWindow::on_btnAddConn_clicked(bool /*checked*/)
@@ -482,14 +460,10 @@ void ConnectWindow::on_btnAddConn_clicked(bool /*checked*/)
     lwi->setSizeHint(ci->sizeHint());
     ui->listStatic->addItem(lwi);
     ui->listStatic->setItemWidget(lwi, ci);
+    ce.deinit();
 
     on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
-
-//    if (ui->tabWidget->currentIndex() == 1)
-//        ui->btnConnect->setEnabled(ui->listStatic->count());
-
     saveStaticList();
-    ce.deinit();
 }
 
 void ConnectWindow::on_btnEditConn_clicked(bool /*checked*/)
@@ -520,10 +494,6 @@ void ConnectWindow::on_btnDeleteConn_clicked(bool /*checked*/)
         delete lwi;
 
         on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
-
-//        if (ui->tabWidget->currentIndex() == 1)
-//            ui->btnConnect->setEnabled(ui->listStatic->count());
-
         saveStaticList();
     }
 }
