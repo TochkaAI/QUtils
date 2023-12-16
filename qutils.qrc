@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="add_connection">resources/add_connection.svg</file>
+        <file alias="edit_connection">resources/edit_connection.svg</file>
+        <file alias="remove_connection">resources/remove_connection.svg</file>
+    </qresource>
+</RCC>
