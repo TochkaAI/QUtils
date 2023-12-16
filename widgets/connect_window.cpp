@@ -318,19 +318,23 @@ void ConnectWindow::on_tabWidget_currentChanged(int index)
 
 void ConnectWindow::requestList()
 {
-    for (network::Interface* intf : _netInterfaces)
-    {
-        for (int k = 0; k < 5; ++k)
-        {
-            // Отправка на localhost
-            Message::Ptr message = createMessage(command::CtlDiscovery);
-            message->appendDestinationPoint({QHostAddress::LocalHost, _port + k});
-            udp::socket().send(message);
+    const int attempts = 5;
 
+    // Отправка на localhost
+    for (int a = 0; a < attempts; ++a)
+    {
+        Message::Ptr message = createMessage(command::CtlDiscovery);
+        message->appendDestinationPoint({QHostAddress::LocalHost, _port + a});
+        udp::socket().send(message);
+    }
+
+    for (network::Interface* intf : _netInterfaces)
+        for (int a = 0; a < attempts; ++a)
+        {
             if (intf->canBroadcast() && !intf->isPointToPoint())
             {
                 Message::Ptr message = createMessage(command::CtlDiscovery);
-                message->appendDestinationPoint({intf->broadcast(), _port + k});
+                message->appendDestinationPoint({intf->broadcast(), _port + a});
                 udp::socket().send(message);
             }
             else if (intf->isPointToPoint() && (intf->subnetPrefixLength() == 24))
@@ -345,7 +349,7 @@ void ConnectWindow::requestList()
                 {
                     ip4[0] = i;
                     QHostAddress addr {ip4_val};
-                    message->appendDestinationPoint({addr, _port + k});
+                    message->appendDestinationPoint({addr, _port + a});
                     if (message->destinationPoints().count() > 20)
                     {
                         udp::socket().send(message);
@@ -357,7 +361,7 @@ void ConnectWindow::requestList()
                     udp::socket().send(message);
             }
         }
-    }
+
 //    for (const QHostAddress& route : _routes)
 //    {
 //        for (int k = 0; k < 5; ++k)
