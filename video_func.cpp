@@ -87,9 +87,11 @@ QImage cvMatToQImage(const cv::Mat& image)
     return QImage();
 }
 
+#ifdef VIDEO_CAPTURE
 QImage cvMatToQImage(const video::Frame::Ptr& frame)
 {
     return cvMatToQImage(frame->data);
 }
+#endif
 
 } // namespace qutils
