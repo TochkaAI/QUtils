@@ -15,7 +15,10 @@
 #include "pproto/commands/pool.h"
 #include "pproto/transport/udp.h"
 
+#ifndef ONLY_STATIC_CONNECTION
 #include "commands/commands.h"
+#endif
+
 #include "message_box.h"
 
 #include <QCloseEvent>
@@ -39,6 +42,8 @@ ConnectWindow::ConnectWindow(QWidget *parent) :
     //setWindowState(windowState() & ~(Qt::WindowMaximized | Qt::WindowFullScreen));
     //setWindowFlags(Qt::Dialog|Qt::WindowCloseButtonHint|Qt::MSWindowsFixedSizeDialogHint);
 
+#ifndef ONLY_STATIC_CONNECTION
+
     chk_connect_q(&udp::socket(), &udp::Socket::message,
                   this, &ConnectWindow::message)
 
@@ -48,6 +53,8 @@ ConnectWindow::ConnectWindow(QWidget *parent) :
     FUNC_REGISTRATION(CtlDiscovery)
 
     #undef FUNC_REGISTRATION
+
+#endif
 }
 
 ConnectWindow::~ConnectWindow()
@@ -59,6 +66,7 @@ bool ConnectWindow::init(tcp::Socket::Ptr socket)
 {
     _socket = socket;
 
+#ifndef ONLY_STATIC_CONNECTION
     network::Interface::List nl = network::getInterfaces();
     _netInterfaces.swap(nl);
 
@@ -94,6 +102,7 @@ bool ConnectWindow::init(tcp::Socket::Ptr socket)
 
     requestList();
     _timerId = startTimer(2*1000);
+#endif
 
     loadGeometry();
     loadStaticList();
@@ -103,8 +112,10 @@ bool ConnectWindow::init(tcp::Socket::Ptr socket)
 
 void ConnectWindow::deinit()
 {
+#ifndef ONLY_STATIC_CONNECTION
     KILL_TIMER(_timerId)
     udp::socket().stop();
+#endif
     saveGeometry();
 }
 
@@ -221,6 +232,7 @@ void ConnectWindow::saveStaticList()
 
 void ConnectWindow::message(const pproto::Message::Ptr& message)
 {
+#ifndef ONLY_STATIC_CONNECTION
     if (message->processed())
         return;
 
@@ -230,6 +242,7 @@ void ConnectWindow::message(const pproto::Message::Ptr& message)
             message->markAsProcessed();
         _funcInvoker.call(message, fr);
     }
+#endif
 }
 
 void ConnectWindow::on_btnConnect_clicked(bool /*checked*/)
@@ -309,6 +322,7 @@ void ConnectWindow::on_tabWidget_currentChanged(int index)
 
 void ConnectWindow::requestList()
 {
+#ifndef ONLY_STATIC_CONNECTION
     const int attempts = 5;
 
     // Отправка на localhost
@@ -379,10 +393,12 @@ void ConnectWindow::requestList()
 //                udp::socket().send(message);
 //        }
 //    }
+#endif
 }
 
 void ConnectWindow::updateList()
 {
+#ifndef ONLY_STATIC_CONNECTION
     for (int i = 0; i < ui->listDynamic->count(); ++i)
     {
         QListWidgetItem* lwi = ui->listDynamic->item(i);
@@ -396,10 +412,12 @@ void ConnectWindow::updateList()
         }
     }
     on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
+#endif
 }
 
 void ConnectWindow::command_CtlDiscovery(const Message::Ptr& message)
 {
+#ifndef ONLY_STATIC_CONNECTION
     if (message->socketType() != SocketType::Udp
         || message->type() == Message::Type::Command)
         return;
@@ -439,6 +457,7 @@ void ConnectWindow::command_CtlDiscovery(const Message::Ptr& message)
         //ui->listCtl->sortItems();
     }
     on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
+#endif
 }
 
 void ConnectWindow::on_btnAddConn_clicked(bool /*checked*/)

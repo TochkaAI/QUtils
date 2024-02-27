@@ -1,7 +1,10 @@
 #pragma once
 
+#ifndef ONLY_STATIC_CONNECTION
 #include "shared/qt/network/interfaces.h"
 #include "pproto/func_invoker.h"
+#endif
+
 #include "pproto/transport/tcp.h"
 
 #include <QDialog>
@@ -69,6 +72,9 @@ private:
     int _port;
 
     tcp::Socket::Ptr _socket;
+
+#ifndef ONLY_STATIC_CONNECTION
     FunctionInvoker  _funcInvoker;
     network::Interface::List _netInterfaces;
+#endif
 };
