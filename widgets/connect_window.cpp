@@ -276,9 +276,6 @@ void ConnectWindow::on_btnConnect_clicked(bool /*checked*/)
     ui->btnConnect->setEnabled(false);
     setCursor(Qt::WaitCursor);
 
-    //_socket->setEncryption(true);
-    //_socket->setCompressionLevel(-1);
-    _socket->setEchoTimeout(5);
     _socket->connect();
 
     int attempts = 0;
