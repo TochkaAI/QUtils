@@ -506,7 +506,7 @@ void ConnectWindow::on_btnDeleteConn_clicked(bool /*checked*/)
 
     if (QListWidgetItem* lwi = ui->listStatic->currentItem())
     {
-        ui->listDynamic->removeItemWidget(lwi);
+        ui->listStatic->removeItemWidget(lwi);
         delete lwi;
 
         on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
