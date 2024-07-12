@@ -16,7 +16,7 @@
 #include "pproto/transport/udp.h"
 
 #ifndef ONLY_STATIC_CONNECTION
-#include "commands/commands.h"
+#include "commands/discovery.h"
 #endif
 
 #include "message_box.h"
@@ -62,16 +62,20 @@ ConnectWindow::~ConnectWindow()
     delete ui;
 }
 
-bool ConnectWindow::init(tcp::Socket::Ptr socket)
+bool ConnectWindow::init(tcp::Socket::Ptr socket, int port, const QString& prefix,
+                         const QString caption)
 {
     _socket = socket;
+    if (!caption.isEmpty())
+        setWindowTitle(caption);
 
 #ifndef ONLY_STATIC_CONNECTION
     network::Interface::List nl = network::getInterfaces();
     _netInterfaces.swap(nl);
 
-    _port = DEFAULT_PORT;
-    config::base().getValue("connection.port", _port);
+    _port = port;
+    _prefix = prefix;
+    //config::base().getValue("connection.port", _port);
 
     int attempts = 1;
     while (attempts <= 5)
@@ -139,8 +143,14 @@ void ConnectWindow::loadGeometry()
     else
         setGeometry(v[0], v[1], v[2], v[3]);
 
+    QString tabIndexStr = "windows.connect_window.";
+    if (!_prefix.isEmpty())
+        tabIndexStr += _prefix + ".tab_index";
+    else
+        tabIndexStr += "tab_index";
+
     int tabIndex = 0;
-    config::base().getValue("windows.connect_window.tab_index", tabIndex);
+    config::base().getValue(tabIndexStr.toStdString(), tabIndex);
     ui->tabWidget->setCurrentIndex(tabIndex);
 }
 
@@ -150,8 +160,15 @@ void ConnectWindow::saveGeometry()
     QVector<int> v {g.x(), g.y(), g.width(), g.height()};
     config::base().setValue("windows.connect_window.geometry", v);
 
+
+    QString tabIndexStr = "windows.connect_window.";
+    if (!_prefix.isEmpty())
+        tabIndexStr += _prefix + ".tab_index";
+    else
+        tabIndexStr += "tab_index";
+
     int tabIndex = ui->tabWidget->currentIndex();
-    config::base().setValue("windows.connect_window.tab_index", tabIndex);
+    config::base().setValue(tabIndexStr.toStdString(), tabIndex);
 }
 
 void ConnectWindow::loadStaticList()
@@ -200,7 +217,12 @@ void ConnectWindow::loadStaticList()
         }
         return true;
     };
-    config::base().getValue("connections", loadFunc);
+
+    QString connectStr = "static_connections";
+    if (!_prefix.isEmpty())
+        connectStr = _prefix + ".static_connections";
+
+    config::base().getValue(connectStr.toStdString(), loadFunc);
 
     //ui->listCtl->sortItems();
     on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
@@ -225,8 +247,13 @@ void ConnectWindow::saveStaticList()
         }
         return true;
     };
-    config::base().remove("connections");
-    config::base().setValue("connections", saveFunc);
+
+    QString connectStr = "static_connections";
+    if (!_prefix.isEmpty())
+        connectStr = _prefix + ".static_connections";
+
+    config::base().remove(connectStr.toStdString());
+    config::base().setValue(connectStr.toStdString(), saveFunc);
     config::base().saveFile();
 }
 

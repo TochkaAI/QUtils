@@ -34,7 +34,8 @@ public:
     explicit ConnectWindow(QWidget *parent = 0);
     ~ConnectWindow();
 
-    bool init(tcp::Socket::Ptr socket);
+    bool init(tcp::Socket::Ptr socket, int port, const QString& prefix = {},
+              const QString caption = {});
     void deinit();
 
 private slots:
@@ -69,7 +70,8 @@ private:
     Ui::ConnectWindow *ui;
 
     int _timerId = {-1};
-    int _port;
+    int _port = {0};
+    QString _prefix;
 
     tcp::Socket::Ptr _socket;
 
