@@ -43,7 +43,6 @@ ConnectWindow::ConnectWindow(QWidget *parent) :
     //setWindowFlags(Qt::Dialog|Qt::WindowCloseButtonHint|Qt::MSWindowsFixedSizeDialogHint);
 
 #ifndef ONLY_STATIC_CONNECTION
-
     chk_connect_q(&udp::socket(), &udp::Socket::message,
                   this, &ConnectWindow::message)
 
@@ -54,6 +53,9 @@ ConnectWindow::ConnectWindow(QWidget *parent) :
 
     #undef FUNC_REGISTRATION
 
+#else
+    ui->tabWidget->setTabEnabled(0, false);
+    ui->tabWidget->setCurrentIndex(1);
 #endif
 }
 
@@ -143,6 +145,7 @@ void ConnectWindow::loadGeometry()
     else
         setGeometry(v[0], v[1], v[2], v[3]);
 
+#ifndef ONLY_STATIC_CONNECTION
     QString tabIndexStr = "windows.connect_window.";
     if (!_prefix.isEmpty())
         tabIndexStr += _prefix + ".tab_index";
@@ -152,6 +155,7 @@ void ConnectWindow::loadGeometry()
     int tabIndex = 0;
     config::base().getValue(tabIndexStr.toStdString(), tabIndex);
     ui->tabWidget->setCurrentIndex(tabIndex);
+#endif
 }
 
 void ConnectWindow::saveGeometry()
