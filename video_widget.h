@@ -22,6 +22,11 @@ public:
     Qt::TransformationMode transformMode() const;
     void setTransformMode(Qt::TransformationMode);
 
+    // Растягивать изображение на все пространство виджета с сохранением
+    // пропорций
+    bool stretch() const;
+    void setStretch(bool);
+
 private:
     //Q_OBJECT
     void resizeEvent(QResizeEvent*) override;
@@ -34,4 +39,5 @@ private:
     QImage _scaleImage;
     QString _noImageMessage;
     Qt::TransformationMode _transformMode;
+    bool _stretch = {false};
 };

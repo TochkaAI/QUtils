@@ -34,10 +34,26 @@ void VideoWidget::setTransformMode(Qt::TransformationMode val)
     _transformMode = val;
 }
 
+bool VideoWidget::stretch() const
+{
+    return _stretch;
+}
+
+void VideoWidget::setStretch(bool val)
+{
+    _stretch = val;
+}
+
 QImage VideoWidget::scaleImage(const QImage& img)
 {
     if (img.isNull())
         return img;
+
+    if (!_stretch)
+    {
+        if (width() > img.width() && (height() > img.height()))
+            return img;
+    }
 
     return img.scaled(size(),
                       Qt::KeepAspectRatio /*Qt::KeepAspectRatioByExpanding*/,
