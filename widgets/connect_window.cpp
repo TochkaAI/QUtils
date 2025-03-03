@@ -179,12 +179,12 @@ void ConnectWindow::loadStaticList()
 {
     ui->listStatic->clear();
 
-    YamlConfig::Func loadFunc = [this](YamlConfig* conf, YAML::Node& nodes, bool logWarn)
+    YamlConfig::Func loadFunc = [this](YamlConfig* conf, YAML::Node& nodes, bool)
     {
         for (const YAML::Node& node : nodes)
         {
             QString addrStr;
-            conf->getValue(node, "address", addrStr, logWarn);
+            conf->getValue(node, "address", addrStr, true);
             if (addrStr.isEmpty())
                 continue;
 
@@ -196,7 +196,7 @@ void ConnectWindow::loadStaticList()
             }
 
             QString portStr;
-            conf->getValue(node, "port", portStr, logWarn);
+            conf->getValue(node, "port", portStr, true);
             if (portStr.isEmpty())
                 continue;
 
@@ -209,7 +209,7 @@ void ConnectWindow::loadStaticList()
             }
 
             QString info {u8"Пусто"};
-            conf->getValue(node, "info", info, logWarn);
+            conf->getValue(node, "info", info, true);
 
             ConnectItem* ci = new ConnectItem();
             ci->setInfo(info);
@@ -226,7 +226,7 @@ void ConnectWindow::loadStaticList()
     if (!_prefix.isEmpty())
         connectStr = _prefix + ".static_connections";
 
-    config::base().getValue(connectStr.toStdString(), loadFunc);
+    config::base().getValue(connectStr.toStdString(), loadFunc, false);
 
     //ui->listCtl->sortItems();
     on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
