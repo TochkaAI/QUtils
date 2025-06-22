@@ -19,9 +19,9 @@ REGISTRY_COMMAND_SINGLPROC(CtlDiscovery, "8c44be36-a2cf-4311-aeee-b63d198247ed")
 
 namespace data {
 
-bserial::RawVector CtlDiscovery::toRaw() const
+void CtlDiscovery::toRaw(bserial::DataStream& stream) const
 {
-    B_SERIALIZE_V1(stream)
+    B_SERIALIZE_V1
     stream << info;
     stream << applId;
     stream << procId;
@@ -31,7 +31,7 @@ bserial::RawVector CtlDiscovery::toRaw() const
 
 void CtlDiscovery::fromRaw(const bserial::RawVector& vect)
 {
-    B_DESERIALIZE_V1(vect, stream)
+    B_DESERIALIZE_V1(vect)
     stream >> info;
     stream >> applId;
     stream >> procId;
