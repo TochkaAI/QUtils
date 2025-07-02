@@ -136,15 +136,17 @@ void ConnectWindow::timerEvent(QTimerEvent* event)
 
 void ConnectWindow::loadGeometry()
 {
-    QVector<int> v {10, 10, 280, 350};
-    if (!config::base().getValue("windows.connect_window.geometry", v))
+    QVector<int> wg;
+    config::base().getValue("windows.connect_window.geometry", wg);
+    if (wg.count() != 4)
     {
         QRect parentGeometry = static_cast<QWidget*>(parent())->geometry();
         move(parentGeometry.center() - geometry().center());
     }
     else
-        setGeometry(v[0], v[1], v[2], v[3]);
-
+    {
+        setGeometry(wg[0], wg[1], wg[2], wg[3]);
+    }
 #ifndef ONLY_STATIC_CONNECTION
     QString tabIndexStr = "windows.connect_window.";
     if (!_prefix.isEmpty())
@@ -161,9 +163,8 @@ void ConnectWindow::loadGeometry()
 void ConnectWindow::saveGeometry()
 {
     QRect g = geometry();
-    QVector<int> v {g.x(), g.y(), g.width(), g.height()};
-    config::base().setValue("windows.connect_window.geometry", v);
-
+    QVector<int> wg {g.x(), g.y(), g.width(), g.height()};
+    config::base().setValue("windows.connect_window.geometry", wg);
 
     QString tabIndexStr = "windows.connect_window.";
     if (!_prefix.isEmpty())
