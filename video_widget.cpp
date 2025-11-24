@@ -71,7 +71,8 @@ void VideoWidget::paintEvent(QPaintEvent* event)
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
     p.setRenderHint(QPainter::SmoothPixmapTransform, true);
-#if QT_VERSION < 0x060000
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+    // Note: Since HighQualityAntialiasing was actually deprecated in Qt 5.14,
     p.setRenderHint(QPainter::HighQualityAntialiasing, true);
 #endif
     p.setCompositionMode(QPainter::CompositionMode_SourceOver);
