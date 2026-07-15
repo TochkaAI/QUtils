@@ -20,6 +20,7 @@
 #endif
 
 #include "message_box.h"
+#include "load_geometry.h"
 
 #include <QCloseEvent>
 #include <QInputDialog>
@@ -136,17 +137,9 @@ void ConnectWindow::timerEvent(QTimerEvent* event)
 
 void ConnectWindow::loadGeometry()
 {
-    QVector<int> wg;
-    config::base().getValue("windows.connect_window.geometry", wg);
-    if (wg.count() != 4)
-    {
-        QRect parentGeometry = static_cast<QWidget*>(parent())->geometry();
-        move(parentGeometry.center() - geometry().center());
-    }
-    else
-    {
-        setGeometry(wg[0], wg[1], wg[2], wg[3]);
-    }
+    vector<int> ddg = dialogDefaultGeometry(this);
+    windowLoadGeometry(config::base(), "windows.connect_window.geometry", this, &ddg);
+
 #ifndef ONLY_STATIC_CONNECTION
     QString tabIndexStr = "windows.connect_window.";
     if (!_prefix.isEmpty())
