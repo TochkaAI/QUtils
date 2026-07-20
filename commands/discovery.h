@@ -40,5 +40,3 @@ struct CtlDiscovery : Data<&command::CtlDiscovery,
 
 } // namespace data
 } // namespace pproto
-
-
