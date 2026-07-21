@@ -19,8 +19,8 @@
 #include "commands/discovery.h"
 #endif
 
+#include "config/load_geometry.h"
 #include "message_box.h"
-#include "load_geometry.h"
 
 #include <QCloseEvent>
 #include <QInputDialog>
