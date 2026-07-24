@@ -1,5 +1,6 @@
 #pragma once
 
+#include "shared/logger/logger.h"
 #include "pproto/commands/base.h"
 
 namespace pproto::data {
@@ -104,3 +105,9 @@ Packer& Identity::jserialize(const This* ct, Packer& p)
 }
 
 } // namespace pproto::data
+
+namespace alog {
+
+Line& operator<< (Line&, const pproto::data::Identity&);
+
+} // namespace alog

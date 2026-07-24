@@ -52,3 +52,14 @@ void Identity::fromRaw(const bserial::RawVector& vect)
 }
 
 } // namespace pproto::data
+
+namespace alog {
+
+Line& operator<< (Line& line, const pproto::data::Identity& identity)
+{
+    if (line.toLogger())
+        line << identity.toString();
+    return line;
+}
+
+} // namespace alog
