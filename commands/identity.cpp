@@ -7,6 +7,30 @@ bool Identity::isNull() const
     return (id.isNull() && (index < 0) && name.isEmpty());
 }
 
+QString Identity::toString() const
+{
+    QString str = "{";
+    bool nextComma = false;
+    if (!id.isNull())
+    {
+        str += "id: " + digest4(id);
+        nextComma = true;
+    }
+    if (index > -1)
+    {
+        if (nextComma) str += ", ";
+        str += "index: " + QString::number(index);
+        nextComma = true;
+    }
+    if (!name.isEmpty())
+    {
+        if (nextComma) str += ", ";
+        str += "name: " + name;
+    }
+    str += "}";
+    return str;
+}
+
 void Identity::toRaw(bserial::DataStream& stream) const
 {
     B_SERIALIZE_V1

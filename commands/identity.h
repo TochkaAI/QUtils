@@ -59,6 +59,7 @@ struct Identity
     };
 
     bool isNull() const;
+    QString toString() const;
 
     DECLARE_B_SERIALIZE_FUNC
 
