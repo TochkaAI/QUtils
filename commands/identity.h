@@ -62,13 +62,45 @@ struct Identity
     QString toString() const;
 
     DECLARE_B_SERIALIZE_FUNC
+    DECLARE_J_SERIALIZE_FUNC
 
-    J_SERIALIZE_BEGIN
+    // J_SERIALIZE_BEGIN
+    //     J_SERIALIZE_MAP_OPT( "id"         , id        )
+    //     J_SERIALIZE_MAP_OPT( "index"      , index     )
+    //     J_SERIALIZE_MAP_OPT( "name"       , name      )
+    //     J_SERIALIZE_MAP_OPT( "find_field" , findField )
+    // J_SERIALIZE_END
+};
+
+template<typename This, typename Packer>
+Packer& Identity::jserialize(const This* ct, Packer& p)
+{
+    This* t = const_cast<This*>(ct);
+
+    p.startObject();
+
+    if (p.isWriter())
+    {
+        if (!t->id.isNull())
+            J_SERIALIZE_MAP_ITEM( "id", id )
+
+        if (t->index >= 0)
+            J_SERIALIZE_MAP_ITEM( "index", index )
+
+        if (!t->name.isEmpty())
+            J_SERIALIZE_MAP_ITEM( "name", name )
+
+        if (!t->isNull())
+            J_SERIALIZE_MAP_ITEM( "find_field", findField )
+    }
+    else if (p.isReader())
+    {
         J_SERIALIZE_MAP_OPT( "id"         , id        )
         J_SERIALIZE_MAP_OPT( "index"      , index     )
         J_SERIALIZE_MAP_OPT( "name"       , name      )
         J_SERIALIZE_MAP_OPT( "find_field" , findField )
-    J_SERIALIZE_END
-};
+    }
+    return p.endObject();
+}
 
 } // namespace pproto::data
