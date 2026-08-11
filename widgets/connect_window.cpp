@@ -81,7 +81,7 @@ bool ConnectWindow::init(tcp::Socket::Ptr socket, int port, const QString& prefi
     //config::base().getValue("connection.port", _port);
 
     int attempts = 1;
-    while (attempts <= 5)
+    while (attempts <= 10)
     {
         if (!udp::socket().init({QHostAddress::AnyIPv4, _port + attempts}))
             return false;
@@ -101,7 +101,7 @@ bool ConnectWindow::init(tcp::Socket::Ptr socket, int port, const QString& prefi
         ++attempts;
         udp::socket().stop();
     }
-    if (attempts > 5)
+    if (attempts > 10)
     {
         log_error << "The number attempts of initialization UDP is exhausted";
         return false;
@@ -345,7 +345,7 @@ void ConnectWindow::on_tabWidget_currentChanged(int index)
 void ConnectWindow::requestList()
 {
 #ifndef ONLY_STATIC_CONNECTION
-    const int attempts = 5;
+    const int attempts = 10;
 
     // Отправка на localhost
     for (int a = 0; a < attempts; ++a)
@@ -453,10 +453,30 @@ void ConnectWindow::command_CtlDiscovery(const Message::Ptr& message)
         QListWidgetItem* lwi = ui->listDynamic->item(i);
         ConnectItem* ci =
             qobject_cast<ConnectItem*>(ui->listDynamic->itemWidget(lwi));
-        if (ci && (ci->applId() == ctlDiscovery.applId))
+        if (!ci)
+            continue;
+
+        // Один процесс отвечает с разных IP (localhost + LAN) — склеиваем
+        // по procId. Учитываем hostPoint, если ответ без procId.
+        const bool sameProc = !ctlDiscovery.procId.isNull()
+                              && (ci->procId() == ctlDiscovery.procId);
+        const bool sameHost = ctlDiscovery.procId.isNull()
+                              && (ci->hostPoint() == ctlDiscovery.hostPoint);
+        if (sameProc || sameHost)
         {
             ci->resetLifeTimer();
             ci->setInfo(ctlDiscovery.info);
+            ci->setApplId(ctlDiscovery.applId);
+
+            if (!ctlDiscovery.procId.isNull())
+                ci->setProcId(ctlDiscovery.procId);
+
+            // Предпочтительнее localhost-адрес вместо LAN
+            if (!ci->hostPoint().address().isLoopback()
+                && ctlDiscovery.hostPoint.address().isLoopback())
+            {
+                ci->setHostPoint(ctlDiscovery.hostPoint);
+            }
             //ui->listCtl->sortItems();
             found = true;
             break;
@@ -467,6 +487,7 @@ void ConnectWindow::command_CtlDiscovery(const Message::Ptr& message)
         ConnectItem* ci = new ConnectItem();
         ci->setInfo(ctlDiscovery.info);
         ci->setApplId(ctlDiscovery.applId);
+        ci->setProcId(ctlDiscovery.procId);
         ci->setHostPoint(ctlDiscovery.hostPoint);
         ci->resetLifeTimer();
         QListWidgetItem* lwi = new QListWidgetItem(/*ci*/);

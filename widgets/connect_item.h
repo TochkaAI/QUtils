@@ -23,6 +23,9 @@ public:
     QUuidEx applId() const {return _applId;}
     void setApplId(const QUuidEx& val) {_applId = val;}
 
+    QUuidEx procId() const {return _procId;}
+    void setProcId(const QUuidEx& val) {_procId = val;}
+
     pproto::HostPoint hostPoint() const {return _hostPoint;}
     void setHostPoint(const pproto::HostPoint&);
 
@@ -36,6 +39,7 @@ private:
     Ui::ConnectItem *ui;
 
     QUuidEx _applId;
+    QUuidEx _procId;
     steady_timer _lifeTimer;
     pproto::HostPoint _hostPoint;
 };
