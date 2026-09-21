@@ -17,10 +17,10 @@ struct Identity
     Identity() = default;
     Identity(const Identity&) = default;
 
-    Identity(const QUuidEx& id ) : id(id),       findField(FindField::Id)    {}
-    Identity(const int index   ) : index(index), findField(FindField::Index) {}
-    Identity(const QString name) : name(name),   findField(FindField::Name)  {}
-    Identity(const char*   name) : name(name),   findField(FindField::Name)  {}
+    Identity(const QUuidEx& id  ) : id(id),       findField(FindField::Id)    {}
+    Identity(const int index    ) : index(index), findField(FindField::Index) {}
+    Identity(const QString& name) : name(name),   findField(FindField::Name)  {}
+    Identity(const char*    name) : name(name),   findField(FindField::Name)  {}
 
     Identity(const QUuidEx& id, int index)
         : id(id), index(index), findField(FindField::IdIndex)
@@ -33,7 +33,7 @@ struct Identity
         : id(id), name(name), findField(FindField::IdName)
     {}
 
-    Identity(int index, const QString name)
+    Identity(int index, const QString& name)
         : index(index), name(name), findField(FindField::IndexName)
     {}
     Identity(int index, const char* name)
